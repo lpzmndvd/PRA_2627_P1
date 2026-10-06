@@ -1,7 +1,10 @@
-template<typedef T>
-using namespace std
+#include <ostream>
+#include <stdexcept>
+#include "List.h"
 
-class ListArray : public List {
+using namespace std;
+template<typename T>
+class ListArray : public List<T> {
 
 	private:
 		T* arr;
@@ -20,66 +23,86 @@ class ListArray : public List {
 			if (pos<0 || pos>self.size()){
 				throw out_of_range("Posición fuera de rango");
 			}
-			if(n<max){
-                           for(int i=n+1; i>pos; i++){
-                                arr[i] = arr[i-1];
-                           }
 			if(n==max){
-				//self.resize();
-			}
-                           arr[pos]=e;
-                           n++;
+                                self.resize();
+                        }
+                        for(int i=n+1; i>pos; i++){
+                                arr[i] = arr[i-1];
+                        }
+                        arr[pos]=e;
+                        n++;
 		}
 
                 void append(T e) override{
-			if(n<max){
-				arr[n]=e;
-				n++;
-			}
 			if(n==max){
-                                //self.resize();
+                                self.resize();
                         }
+			arr[n]=e;
+                        n++;
 		}
 
                 void prepend(T e) override{
-			if(n<max){
-                           if(n==0){
-			   	arr[0]=e;
-			   }
-			   else{
-			   	self.insert(0, e);
-			   }
-			}
                        	if(n==max){
-                                //self.resize();
-                        }
-
+                                self.resize();
+			}	
+			self.insert(0, e);
+			n++;
 		}
                 T remove(int pos) override{
 			if (pos<0 || pos>=self.size()){
                                 throw out_of_range("Posición fuera de rango");
                         }
 			T eliminado;
-			eliminado = arreglo[pos];
-                        arreglo[pos]=NULL;
+			eliminado = arr[pos];
+                        for(int i=pos; i<n; i++){
+				arr[i]= arr[i+1];
+			}
+			arr[n]=NULL;
+			n--;
 
-			if(/*Hay demasiado espacio*/){
-                                //self.resize();
+			if(n<max/2){
+                                self.resize();
                         }
 
 			return eliminado;
-                }
+   		}
 
 		
                 T get(int pos) override{
-			
+			return arr[pos]
 		}
-                int search(T e) override{}
-                bool empty() override{}
+                int search(T e) override{
+			for(int i=0; i<n; i++){
+				if(arr[i]==e){
+					return i;
+				}
+			}
+			return -1;
+		}
+                bool empty() override{
+			return (n==0)? true : false;
+		}
                 int size() override{
 			return n;
 		}
 		
+
+		T operator[](int pos){
+			if(pos<0 || pos>self.size()){
+				throw out_of_range("Posición fuera de rango");
+			}
+			return arr[pos];
+		}
+
+
+		friend std::ostream& operator<<(std::ostream &out, ListArray<T> &list){
+			for(int i=0; i<n; i++){
+				out << arr[i] << " ";
+			}
+		return out;
+		}
+
+
 
 		~ListArray() override {
 			delete[] arr;
@@ -87,6 +110,23 @@ class ListArray : public List {
 		} 
 
 	private:
-		void resize(int new_size){}//Una vez hecho, corregir insert(), append(), prepend() y remove().
+		void resize(int new_size){
+			T* newarr;
+			if(n==max){
+				max=max*2;
+				newarr = new T[max];
+			}
+			if(n<max/2){
+				max=max/2;
+				newarr = new T[max];
+			}
+		for(int i=0; i<n; i++){
+			newarr[i]=arr[i];
+		}
+
+		delete[arr];
+		
+		arr=newarr;
+		}
 };
 
