@@ -20,11 +20,11 @@ class ListArray : public List<T> {
 			n=0;
 		}
                 void insert(int pos, T e) override{
-			if (pos<0 || pos>self.size()){
+			if (pos<0 || pos>this.size()){
 				throw out_of_range("Posición fuera de rango");
 			}
 			if(n==max){
-                                self.resize();
+                                this.resize();
                         }
                         for(int i=n+1; i>pos; i++){
                                 arr[i] = arr[i-1];
@@ -35,7 +35,7 @@ class ListArray : public List<T> {
 
                 void append(T e) override{
 			if(n==max){
-                                self.resize();
+                                this.resize();
                         }
 			arr[n]=e;
                         n++;
@@ -43,13 +43,13 @@ class ListArray : public List<T> {
 
                 void prepend(T e) override{
                        	if(n==max){
-                                self.resize();
+                                this.resize();
 			}	
-			self.insert(0, e);
+			this.insert(0, e);
 			n++;
 		}
                 T remove(int pos) override{
-			if (pos<0 || pos>=self.size()){
+			if (pos<0 || pos>=this.size()){
                                 throw out_of_range("Posición fuera de rango");
                         }
 			T eliminado;
@@ -61,7 +61,7 @@ class ListArray : public List<T> {
 			n--;
 
 			if(n<max/2){
-                                self.resize();
+                                this.resize();
                         }
 
 			return eliminado;
@@ -69,7 +69,7 @@ class ListArray : public List<T> {
 
 		
                 T get(int pos) override{
-			return arr[pos]
+			return arr[pos];
 		}
                 int search(T e) override{
 			for(int i=0; i<n; i++){
@@ -88,7 +88,7 @@ class ListArray : public List<T> {
 		
 
 		T operator[](int pos){
-			if(pos<0 || pos>self.size()){
+			if(pos<0 || pos>this.size()){
 				throw out_of_range("Posición fuera de rango");
 			}
 			return arr[pos];
@@ -96,8 +96,8 @@ class ListArray : public List<T> {
 
 
 		friend std::ostream& operator<<(std::ostream &out, ListArray<T> &list){
-			for(int i=0; i<n; i++){
-				out << arr[i] << " ";
+			for(int i=0; i<list.size(); i++){
+				out << list.arr[i] << " ";
 			}
 		return out;
 		}
@@ -106,7 +106,6 @@ class ListArray : public List<T> {
 
 		~ListArray() override {
 			delete[] arr;
-			cout << "ListArray destruido" << endl;
 		} 
 
 	private:
@@ -120,11 +119,11 @@ class ListArray : public List<T> {
 				max=max/2;
 				newarr = new T[max];
 			}
-		for(int i=0; i<n; i++){
+		for(int i=0; i<this.size(); i++){
 			newarr[i]=arr[i];
 		}
 
-		delete[arr];
+		delete[] arr;
 		
 		arr=newarr;
 		}
