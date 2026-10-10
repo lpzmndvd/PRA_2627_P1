@@ -10,23 +10,22 @@ class ListArray : public List<T> {
 		T* arr;
 		int max;
 		int n;
-		static const int MINSIZE;
+		static const int MINSIZE=2;
 
 	public:
 		ListArray(){
-			MINSIZE=2;
 			arr= new T[MINSIZE];
 			max=MINSIZE;
 			n=0;
 		}
                 void insert(int pos, T e) override{
-			if (pos<0 || pos>this.size()){
+			if (pos<0 || pos>this->size()){
 				throw out_of_range("Posición fuera de rango");
 			}
 			if(n==max){
-                                this.resize();
+                                this->resize(max*2);
                         }
-                        for(int i=n+1; i>pos; i++){
+                        for(int i=n; i>pos; i--){
                                 arr[i] = arr[i-1];
                         }
                         arr[pos]=e;
@@ -35,7 +34,7 @@ class ListArray : public List<T> {
 
                 void append(T e) override{
 			if(n==max){
-                                this.resize();
+                                this->resize(max*2);
                         }
 			arr[n]=e;
                         n++;
@@ -43,13 +42,12 @@ class ListArray : public List<T> {
 
                 void prepend(T e) override{
                        	if(n==max){
-                                this.resize();
+                                this->resize(max*2);
 			}	
-			this.insert(0, e);
-			n++;
+			this->insert(0, e);
 		}
                 T remove(int pos) override{
-			if (pos<0 || pos>=this.size()){
+			if (pos<0 || pos>=this->size()){
                                 throw out_of_range("Posición fuera de rango");
                         }
 			T eliminado;
@@ -57,11 +55,11 @@ class ListArray : public List<T> {
                         for(int i=pos; i<n; i++){
 				arr[i]= arr[i+1];
 			}
-			arr[n]=NULL;
+			arr[n]=0;
 			n--;
 
 			if(n<max/2){
-                                this.resize();
+                                this->resize(max/2);
                         }
 
 			return eliminado;
@@ -69,6 +67,10 @@ class ListArray : public List<T> {
 
 		
                 T get(int pos) override{
+			if (pos<0 || pos>=this->size()){
+                                throw out_of_range("Posición fuera de rango");
+                        }
+
 			return arr[pos];
 		}
                 int search(T e) override{
@@ -88,7 +90,7 @@ class ListArray : public List<T> {
 		
 
 		T operator[](int pos){
-			if(pos<0 || pos>this.size()){
+			if(pos<0 || pos>this->size()){
 				throw out_of_range("Posición fuera de rango");
 			}
 			return arr[pos];
@@ -96,10 +98,13 @@ class ListArray : public List<T> {
 
 
 		friend std::ostream& operator<<(std::ostream &out, ListArray<T> &list){
+			out << "List => [";
 			for(int i=0; i<list.size(); i++){
-				out << list.arr[i] << " ";
-			}
-		return out;
+                                out << list.arr[i] << " ";
+                        }
+			out << "]" << endl;
+                        return out;
+
 		}
 
 
@@ -111,21 +116,16 @@ class ListArray : public List<T> {
 	private:
 		void resize(int new_size){
 			T* newarr;
-			if(n==max){
-				max=max*2;
-				newarr = new T[max];
+			newarr = new T[new_size];
+			for(int i=0; i<this->size(); i++){
+				newarr[i]=arr[i];
 			}
-			if(n<max/2){
-				max=max/2;
-				newarr = new T[max];
-			}
-		for(int i=0; i<this.size(); i++){
-			newarr[i]=arr[i];
-		}
-
-		delete[] arr;
+			max=new_size;
+			delete[] arr;
 		
-		arr=newarr;
+			arr=newarr;
 		}
 };
+
+
 
